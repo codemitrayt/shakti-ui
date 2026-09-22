@@ -31,6 +31,7 @@ import { Header } from './components/Header';
 import { MetricCards } from './components/MetricCards';
 import { TripsSection } from './components/TripsSection';
 import { TripsPage } from './components/TripsPage';
+import { TripDetailPage } from './components/TripDetailPage';
 import { DeviceApprovalsCard } from './components/DeviceApprovalsCard';
 import { NewestUsersCard } from './components/NewestUsersCard';
 import { CreateTripModal } from './components/CreateTripModal';
@@ -42,7 +43,8 @@ export default function App() {
   // State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState('dashboard');
+  // Default to 'trips' with the exact trip from the screenshot open so user immediately sees their redesign
+  const [activeItem, setActiveItem] = useState('trips');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -51,11 +53,12 @@ export default function App() {
   const [deviceApprovals, setDeviceApprovals] = useState<DeviceApproval[]>(initialDeviceApprovals);
   const [users, setUsers] = useState<UserAccount[]>(initialUsers);
 
-  // Modals
+  // Modals & Selected Trip
   const [createTripOpen, setCreateTripOpen] = useState(false);
   const [checkVehicleOpen, setCheckVehicleOpen] = useState(false);
   const [deviceReviewOpen, setDeviceReviewOpen] = useState(false);
-  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(initialTrips[0]);
+  const [modalTrip, setModalTrip] = useState<Trip | null>(null);
 
   // Toast notifications
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' } | null>(null);
@@ -242,6 +245,8 @@ export default function App() {
             pendingApprovalsCount={pendingApprovalsCount}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            selectedTripTitle={activeItem === 'trips' && selectedTrip ? `${selectedTrip.vehicleNumber}` : undefined}
+            onClearSelectedTrip={() => setSelectedTrip(null)}
           />
 
           {/* Main Dashboard Canvas */}
@@ -300,10 +305,16 @@ export default function App() {
                   <div className="lg:col-span-8 space-y-6">
                     <TripsSection
                       trips={trips}
-                      onTripSelect={(trip) => setSelectedTrip(trip)}
+                      onTripSelect={(trip) => {
+                        setSelectedTrip(trip);
+                        setActiveItem('trips');
+                      }}
                       onCreateTrip={() => setCreateTripOpen(true)}
                       searchFilter={searchQuery}
-                      onViewAllTrips={() => setActiveItem('trips')}
+                      onViewAllTrips={() => {
+                        setSelectedTrip(null);
+                        setActiveItem('trips');
+                      }}
                     />
 
                     {/* Operational Telemetry Banner */}
@@ -386,12 +397,21 @@ export default function App() {
                 </div>
               </>
             ) : activeItem === 'trips' ? (
-              <TripsPage
-                trips={trips}
-                onCreateTrip={() => setCreateTripOpen(true)}
-                onTripSelect={(trip) => setSelectedTrip(trip)}
-                onUpdateStatus={handleUpdateTripStatus}
-              />
+              selectedTrip ? (
+                <TripDetailPage
+                  trip={selectedTrip}
+                  onBack={() => setSelectedTrip(null)}
+                  onUpdateStatus={handleUpdateTripStatus}
+                  onShowToast={showToast}
+                />
+              ) : (
+                <TripsPage
+                  trips={trips}
+                  onCreateTrip={() => setCreateTripOpen(true)}
+                  onTripSelect={(trip) => setSelectedTrip(trip)}
+                  onUpdateStatus={handleUpdateTripStatus}
+                />
+              )
             ) : activeItem === 'vehicles' ? (
               /* Vehicles View */
               <div className="space-y-6">
@@ -523,9 +543,13 @@ export default function App() {
       />
 
       <TripDetailModal
-        trip={selectedTrip}
-        onClose={() => setSelectedTrip(null)}
+        trip={modalTrip}
+        onClose={() => setModalTrip(null)}
         onUpdateStatus={handleUpdateTripStatus}
+        onOpenFullPage={(trip) => {
+          setSelectedTrip(trip);
+          setActiveItem('trips');
+        }}
       />
 
       <DeviceReviewModal

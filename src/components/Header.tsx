@@ -25,6 +25,8 @@ interface HeaderProps {
   pendingApprovalsCount: number;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  selectedTripTitle?: string;
+  onClearSelectedTrip?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -37,6 +39,8 @@ export const Header: React.FC<HeaderProps> = ({
   pendingApprovalsCount,
   searchQuery,
   setSearchQuery,
+  selectedTripTitle,
+  onClearSelectedTrip,
 }) => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -76,7 +80,18 @@ export const Header: React.FC<HeaderProps> = ({
             <>
               <span className="text-slate-500 hover:text-slate-700 cursor-pointer">Operations</span>
               <span className="text-slate-300 font-normal">›</span>
-              <span className="text-slate-900 font-bold">Trips</span>
+              <span
+                onClick={onClearSelectedTrip}
+                className={selectedTripTitle ? 'text-slate-500 hover:text-slate-800 cursor-pointer font-medium' : 'text-slate-900 font-bold'}
+              >
+                Trips
+              </span>
+              {selectedTripTitle && (
+                <>
+                  <span className="text-slate-300 font-normal">›</span>
+                  <span className="text-slate-900 font-bold font-mono-plate">{selectedTripTitle}</span>
+                </>
+              )}
             </>
           ) : (
             <>

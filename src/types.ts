@@ -1,28 +1,50 @@
 export type TripStatus = 'Created' | 'Billed' | 'Verified' | 'Closed' | 'Action required';
 
+export interface TripHistoryEvent {
+  id: string;
+  title: string;
+  timestamp: string;
+  date: string;
+  actor: string;
+  actorInitials: string;
+  location?: string;
+  token?: string;
+  type: 'verified' | 'billed' | 'pass_issued' | 'created' | 'closed';
+  isLatest?: boolean;
+}
+
 export interface Trip {
   id: string;
+  uuid?: string;
   vehicleNumber: string;
+  vehicleModel?: string;
   driverName: string;
   driverPhone?: string;
   site: string;
+  siteCode?: string;
   dock: string;
   status: TripStatus;
   timestamp: string;
   dateFormatted?: string;
   material?: string;
   transporter?: string;
+  transporterPhone?: string;
   passBadge?: 'P1' | 'P2' | null;
+  passToken?: string;
   weightCFT?: string;
+  checksRecorded?: number;
+  challanNumber?: string;
   checkPostsCount?: {
     completed: number;
     total: number;
     warning?: boolean;
+    name?: string;
   };
   tareWeight?: string;
   grossWeight?: string;
   netWeight?: string;
   checkPostStatus?: 'Passed' | 'Pending' | 'Flagged';
+  history?: TripHistoryEvent[];
 }
 
 export interface DeviceApproval {
