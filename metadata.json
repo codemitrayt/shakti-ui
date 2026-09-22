@@ -1,0 +1,6 @@
+{
+  "name": "Sanghmitra Shakti - Operations Dashboard",
+  "description": "Structured, modern fleet logistics and operations dashboard with real-time trip tracking, vehicle verification, and device management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
