@@ -70,6 +70,33 @@ export interface UserAccount {
   status: 'Active' | 'Inactive';
 }
 
+export interface ActionIncident {
+  id: string;
+  vehicleNumber: string;
+  vehicleModel?: string;
+  driverName: string;
+  driverPhone: string;
+  transporter?: string;
+  reason: string;
+  stoppedAt: {
+    name: string;
+    code: string;
+    location?: string;
+  };
+  matchingTripId?: string | null;
+  matchingTripVehicle?: string;
+  matchingTripTransporter?: string;
+  createdAt: string;
+  timeAgo: string;
+  status: 'Open' | 'Resolved';
+  resolution?: {
+    resolvedAt: string;
+    resolvedBy: string;
+    actionTaken: string;
+    notes?: string;
+  };
+}
+
 export interface MetricItem {
   id: string;
   title: string;

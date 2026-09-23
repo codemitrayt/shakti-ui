@@ -17,13 +17,14 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-import { Trip, DeviceApproval, UserAccount, MetricItem, TripStatus } from './types';
+import { Trip, DeviceApproval, UserAccount, MetricItem, TripStatus, ActionIncident } from './types';
 import {
   initialTrips,
   initialDeviceApprovals,
   initialUsers,
   initialMetrics,
   sampleRegisteredVehicles,
+  initialActions,
 } from './data/mockData';
 
 import { Sidebar } from './components/Sidebar';
@@ -33,6 +34,7 @@ import { TripsSection } from './components/TripsSection';
 import { TripsPage } from './components/TripsPage';
 import { TripDetailPage } from './components/TripDetailPage';
 import { CheckVehiclePage } from './components/CheckVehiclePage';
+import { ActionsPage } from './components/ActionsPage';
 import { DeviceApprovalsCard } from './components/DeviceApprovalsCard';
 import { NewestUsersCard } from './components/NewestUsersCard';
 import { CreateTripModal } from './components/CreateTripModal';
@@ -44,8 +46,8 @@ export default function App() {
   // State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Default to 'check-vehicle' so user immediately sees their improved Check a Vehicle page
-  const [activeItem, setActiveItem] = useState('check-vehicle');
+  // Default to 'actions' so user immediately sees their clean, modern Actions UI
+  const [activeItem, setActiveItem] = useState('actions');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -53,6 +55,7 @@ export default function App() {
   const [trips, setTrips] = useState<Trip[]>(initialTrips);
   const [deviceApprovals, setDeviceApprovals] = useState<DeviceApproval[]>(initialDeviceApprovals);
   const [users, setUsers] = useState<UserAccount[]>(initialUsers);
+  const [actions, setActions] = useState<ActionIncident[]>(initialActions);
 
   // Modals & Selected Trip
   const [createTripOpen, setCreateTripOpen] = useState(false);
@@ -69,6 +72,64 @@ export default function App() {
     setTimeout(() => {
       setToast((prev) => (prev?.message === message ? null : prev));
     }, 4000);
+  };
+
+  // Action resolution handlers
+  const handleResolveAction = (
+    incidentId: string,
+    resolution: { actionTaken: string; notes: string; resolvedBy: string }
+  ) => {
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setActions((prev) =>
+      prev.map((a) =>
+        a.id === incidentId
+          ? {
+              ...a,
+              status: 'Resolved',
+              resolution: {
+                resolvedAt: `${nowTime}, today`,
+                resolvedBy: resolution.resolvedBy,
+                actionTaken: resolution.actionTaken,
+                notes: resolution.notes,
+              },
+            }
+          : a
+      )
+    );
+  };
+
+  const handleRecordActionIncident = (incident: {
+    plate: string;
+    driverName: string;
+    driverPhone: string;
+    reason: string;
+    actionTaken: string;
+    notes: string;
+  }) => {
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const newAction: ActionIncident = {
+      id: `ACT-${Date.now().toString().slice(-4)}`,
+      vehicleNumber: incident.plate,
+      driverName: incident.driverName,
+      driverPhone: incident.driverPhone,
+      reason: incident.reason,
+      stoppedAt: {
+        name: 'Barshi',
+        code: 'CP-01',
+        location: 'Solapur Highway Gate',
+      },
+      createdAt: `Today, ${nowTime}`,
+      timeAgo: 'just now',
+      status: 'Open',
+    };
+    setActions((prev) => [newAction, ...prev]);
+  };
+
+  const handleReopenAction = (incidentId: string) => {
+    setActions((prev) =>
+      prev.map((a) => (a.id === incidentId ? { ...a, status: 'Open', timeAgo: 're-opened just now' } : a))
+    );
+    showToast('Action re-opened and returned to Open queue', 'info');
   };
 
   // Dynamic counts
@@ -225,6 +286,7 @@ export default function App() {
           setActiveItem={setActiveItem}
           pendingApprovalsCount={pendingApprovalsCount}
           openTripsCount={openTripsCount}
+          openActionsCount={actions.filter((a) => a.status === 'Open').length}
           mobileOpen={mobileMenuOpen}
           setMobileOpen={setMobileMenuOpen}
         />
@@ -419,6 +481,18 @@ export default function App() {
                 onSelectTrip={(trip) => {
                   setSelectedTrip(trip);
                   setActiveItem('trips');
+                }}
+                onShowToast={showToast}
+              />
+            ) : activeItem === 'actions' ? (
+              <ActionsPage
+                actions={actions}
+                trips={trips}
+                onResolveAction={handleResolveAction}
+                onRecordIncident={handleRecordActionIncident}
+                onReopenAction={handleReopenAction}
+                onCreateTripForVehicle={(plate, driverName, driverPhone) => {
+                  setCreateTripOpen(true);
                 }}
                 onShowToast={showToast}
               />

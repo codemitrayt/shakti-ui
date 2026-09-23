@@ -1,4 +1,4 @@
-import { Trip, DeviceApproval, UserAccount, MetricItem } from '../types';
+import { Trip, DeviceApproval, UserAccount, MetricItem, ActionIncident } from '../types';
 
 export const initialTrips: Trip[] = [
   {
@@ -424,5 +424,76 @@ export const sampleRegisteredVehicles = [
     pucExpiry: '30 Nov 2026',
     gpsStatus: 'Live Tracking Active',
     speed: '42 km/h',
+  },
+];
+
+export const initialActions: ActionIncident[] = [
+  {
+    id: 'ACT-3021',
+    vehicleNumber: 'MH12EZ3456',
+    vehicleModel: 'Tata Signa 2823.K',
+    driverName: 'Rushikesh Mungse',
+    driverPhone: '7499487811',
+    transporter: 'Sanghmitra Logistics Corp',
+    reason: "Driver don't have any pass.",
+    stoppedAt: {
+      name: 'Barshi',
+      code: 'CP-01',
+      location: 'Solapur Highway Gate',
+    },
+    matchingTripId: null,
+    createdAt: '22 Sept 2026, 09:12 pm',
+    timeAgo: 'just now',
+    status: 'Open',
+  },
+  {
+    id: 'ACT-3019',
+    vehicleNumber: 'MH14BB8901',
+    vehicleModel: 'Ashok Leyland 2820 Tipper',
+    driverName: 'Kailas Shinde',
+    driverPhone: '9822104599',
+    transporter: 'Mahalaxmi Transport Services',
+    reason: 'QR Pass unreadable at scanner',
+    stoppedAt: {
+      name: 'Barshi',
+      code: 'CP-01',
+      location: 'Solapur Highway Gate',
+    },
+    matchingTripId: 'TRIP-1068',
+    matchingTripVehicle: 'MH 11 UV 2233',
+    matchingTripTransporter: 'Shree Logistic',
+    createdAt: '22 Sept 2026, 07:40 pm',
+    timeAgo: '1 hour ago',
+    status: 'Resolved',
+    resolution: {
+      resolvedAt: '22 Sept 2026, 07:48 pm',
+      resolvedBy: 'Super Admin',
+      actionTaken: 'Manual pass verified via challan number CH-2026-09-8812',
+      notes: 'Driver had physical printed copy with valid supervisor stamp.',
+    },
+  },
+  {
+    id: 'ACT-3015',
+    vehicleNumber: 'MH09AZ1120',
+    vehicleModel: 'BharatBenz 2828C',
+    driverName: 'Sunil Rathod',
+    driverPhone: '9421884402',
+    transporter: 'Direct Freight Carrier',
+    reason: 'No booking record found for vehicle',
+    stoppedAt: {
+      name: 'Solapur Gate',
+      code: 'CP-02',
+      location: 'Southern Transit Post',
+    },
+    matchingTripId: null,
+    createdAt: '22 Sept 2026, 04:15 pm',
+    timeAgo: '5 hours ago',
+    status: 'Resolved',
+    resolution: {
+      resolvedAt: '22 Sept 2026, 04:32 pm',
+      resolvedBy: 'Officer Deshmukh',
+      actionTaken: 'Gate turnaround / Entry denied',
+      notes: 'Vehicle arrived without loading slip or order dispatch from mining head.',
+    },
   },
 ];

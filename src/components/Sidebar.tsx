@@ -17,6 +17,7 @@ import {
   PanelLeft,
   Flame,
   Radio,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface NavItem {
@@ -39,6 +40,7 @@ interface SidebarProps {
   setActiveItem: (item: string) => void;
   pendingApprovalsCount: number;
   openTripsCount: number;
+  openActionsCount?: number;
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
 }
@@ -50,6 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveItem,
   pendingApprovalsCount,
   openTripsCount,
+  openActionsCount = 1,
   mobileOpen,
   setMobileOpen,
 }) => {
@@ -65,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       items: [
         { id: 'trips', label: 'Trips', icon: GitFork, badge: openTripsCount > 0 ? String(openTripsCount) : null },
         { id: 'check-vehicle', label: 'Check a vehicle', icon: ScanLine, badge: null },
-        { id: 'actions', label: 'Actions', icon: SlidersHorizontal, badge: null },
+        { id: 'actions', label: 'Actions', icon: AlertTriangle, badge: openActionsCount > 0 ? String(openActionsCount) : null },
       ],
     },
     {

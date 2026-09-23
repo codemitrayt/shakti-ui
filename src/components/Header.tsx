@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
     dashboard: 'Dashboard',
     trips: 'Trips & Dispatch',
     'check-vehicle': 'Check a vehicle',
-    actions: 'Operational Actions',
+    actions: 'Actions',
     vehicles: 'Fleet Registry',
     transporters: 'Transporter Directory',
     'sites-docks': 'Sites & Docks',
@@ -98,6 +98,12 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-slate-500 hover:text-slate-700 cursor-pointer">Operations</span>
               <span className="text-slate-300 font-normal">›</span>
               <span className="text-slate-900 font-bold">Check a vehicle</span>
+            </>
+          ) : activeItem === 'actions' ? (
+            <>
+              <span className="text-slate-500 hover:text-slate-700 cursor-pointer">Operations</span>
+              <span className="text-slate-300 font-normal">›</span>
+              <span className="text-slate-900 font-bold">Actions</span>
             </>
           ) : (
             <>
