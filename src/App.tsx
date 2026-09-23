@@ -32,6 +32,7 @@ import { MetricCards } from './components/MetricCards';
 import { TripsSection } from './components/TripsSection';
 import { TripsPage } from './components/TripsPage';
 import { TripDetailPage } from './components/TripDetailPage';
+import { CheckVehiclePage } from './components/CheckVehiclePage';
 import { DeviceApprovalsCard } from './components/DeviceApprovalsCard';
 import { NewestUsersCard } from './components/NewestUsersCard';
 import { CreateTripModal } from './components/CreateTripModal';
@@ -43,8 +44,8 @@ export default function App() {
   // State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Default to 'trips' with the exact trip from the screenshot open so user immediately sees their redesign
-  const [activeItem, setActiveItem] = useState('trips');
+  // Default to 'check-vehicle' so user immediately sees their improved Check a Vehicle page
+  const [activeItem, setActiveItem] = useState('check-vehicle');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -412,6 +413,15 @@ export default function App() {
                   onUpdateStatus={handleUpdateTripStatus}
                 />
               )
+            ) : activeItem === 'check-vehicle' ? (
+              <CheckVehiclePage
+                trips={trips}
+                onSelectTrip={(trip) => {
+                  setSelectedTrip(trip);
+                  setActiveItem('trips');
+                }}
+                onShowToast={showToast}
+              />
             ) : activeItem === 'vehicles' ? (
               /* Vehicles View */
               <div className="space-y-6">

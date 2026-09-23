@@ -49,7 +49,7 @@ export const Header: React.FC<HeaderProps> = ({
   const viewTitles: Record<string, string> = {
     dashboard: 'Dashboard',
     trips: 'Trips & Dispatch',
-    'check-vehicle': 'Vehicle Verification',
+    'check-vehicle': 'Check a vehicle',
     actions: 'Operational Actions',
     vehicles: 'Fleet Registry',
     transporters: 'Transporter Directory',
@@ -92,6 +92,12 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="text-slate-900 font-bold font-mono-plate">{selectedTripTitle}</span>
                 </>
               )}
+            </>
+          ) : activeItem === 'check-vehicle' ? (
+            <>
+              <span className="text-slate-500 hover:text-slate-700 cursor-pointer">Operations</span>
+              <span className="text-slate-300 font-normal">›</span>
+              <span className="text-slate-900 font-bold">Check a vehicle</span>
             </>
           ) : (
             <>
