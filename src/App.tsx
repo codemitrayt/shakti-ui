@@ -17,7 +17,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-import { Trip, DeviceApproval, UserAccount, MetricItem, TripStatus, ActionIncident } from './types';
+import { Trip, DeviceApproval, UserAccount, MetricItem, TripStatus, ActionIncident, RegisteredVehicle } from './types';
 import {
   initialTrips,
   initialDeviceApprovals,
@@ -25,6 +25,7 @@ import {
   initialMetrics,
   sampleRegisteredVehicles,
   initialActions,
+  initialRegisteredVehicles,
 } from './data/mockData';
 
 import { Sidebar } from './components/Sidebar';
@@ -35,6 +36,7 @@ import { TripsPage } from './components/TripsPage';
 import { TripDetailPage } from './components/TripDetailPage';
 import { CheckVehiclePage } from './components/CheckVehiclePage';
 import { ActionsPage } from './components/ActionsPage';
+import { VehiclesPage } from './components/VehiclesPage';
 import { DeviceApprovalsCard } from './components/DeviceApprovalsCard';
 import { NewestUsersCard } from './components/NewestUsersCard';
 import { CreateTripModal } from './components/CreateTripModal';
@@ -46,8 +48,8 @@ export default function App() {
   // State
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  // Default to 'actions' so user immediately sees their clean, modern Actions UI
-  const [activeItem, setActiveItem] = useState('actions');
+  // Default to 'vehicles' so user immediately sees their improved, clean, structured Vehicles page
+  const [activeItem, setActiveItem] = useState('vehicles');
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -56,6 +58,7 @@ export default function App() {
   const [deviceApprovals, setDeviceApprovals] = useState<DeviceApproval[]>(initialDeviceApprovals);
   const [users, setUsers] = useState<UserAccount[]>(initialUsers);
   const [actions, setActions] = useState<ActionIncident[]>(initialActions);
+  const [registeredVehicles, setRegisteredVehicles] = useState<RegisteredVehicle[]>(initialRegisteredVehicles);
 
   // Modals & Selected Trip
   const [createTripOpen, setCreateTripOpen] = useState(false);
@@ -130,6 +133,27 @@ export default function App() {
       prev.map((a) => (a.id === incidentId ? { ...a, status: 'Open', timeAgo: 're-opened just now' } : a))
     );
     showToast('Action re-opened and returned to Open queue', 'info');
+  };
+
+  // Vehicle Registry handlers
+  const handleRegisterVehicle = (newV: Omit<RegisteredVehicle, 'id' | 'addedAgo'>) => {
+    const createdVehicle: RegisteredVehicle = {
+      ...newV,
+      id: `VEH-${Date.now().toString().slice(-4)}`,
+      addedAgo: 'just now',
+      addedDate: 'Today',
+    };
+    setRegisteredVehicles((prev) => [createdVehicle, ...prev]);
+  };
+
+  const handleUpdateVehicle = (vehicleId: string, updates: Partial<RegisteredVehicle>) => {
+    setRegisteredVehicles((prev) =>
+      prev.map((v) => (v.id === vehicleId ? { ...v, ...updates } : v))
+    );
+  };
+
+  const handleDeleteVehicle = (vehicleId: string) => {
+    setRegisteredVehicles((prev) => prev.filter((v) => v.id !== vehicleId));
   };
 
   // Dynamic counts
@@ -287,6 +311,7 @@ export default function App() {
           pendingApprovalsCount={pendingApprovalsCount}
           openTripsCount={openTripsCount}
           openActionsCount={actions.filter((a) => a.status === 'Open').length}
+          vehiclesCount={registeredVehicles.length}
           mobileOpen={mobileMenuOpen}
           setMobileOpen={setMobileMenuOpen}
         />
@@ -497,56 +522,13 @@ export default function App() {
                 onShowToast={showToast}
               />
             ) : activeItem === 'vehicles' ? (
-              /* Vehicles View */
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold text-slate-900">Vehicle Registry</h2>
-                    <p className="text-xs text-slate-500">Fleet records, fitness certifications, and active drivers</p>
-                  </div>
-                  <button
-                    onClick={() => setCheckVehicleOpen(true)}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl"
-                  >
-                    <ScanLine className="w-4 h-4" />
-                    <span>Verify Vehicle</span>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {sampleRegisteredVehicles.map((v) => (
-                    <div
-                      key={v.plate}
-                      className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs space-y-3"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="bg-slate-900 text-white px-2.5 py-1 rounded-lg font-mono-plate font-bold text-sm">
-                          {v.plate}
-                        </div>
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                          {v.status}
-                        </span>
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900">{v.type}</h4>
-                        <p className="text-xs text-slate-500">{v.transporter}</p>
-                      </div>
-                      <div className="text-xs text-slate-600 pt-2 border-t border-slate-100 flex items-center justify-between">
-                        <span>Driver: <strong>{v.driver}</strong></span>
-                        <span className="font-mono-plate">{v.capacity}</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setCheckVehicleOpen(true);
-                        }}
-                        className="w-full py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 transition-colors"
-                      >
-                        Inspect Documentation
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <VehiclesPage
+                vehicles={registeredVehicles}
+                onRegisterVehicle={handleRegisterVehicle}
+                onUpdateVehicle={handleUpdateVehicle}
+                onDeleteVehicle={handleDeleteVehicle}
+                onShowToast={showToast}
+              />
             ) : activeItem === 'users' ? (
               /* Users View */
               <div className="space-y-6">

@@ -41,6 +41,7 @@ interface SidebarProps {
   pendingApprovalsCount: number;
   openTripsCount: number;
   openActionsCount?: number;
+  vehiclesCount?: number;
   mobileOpen: boolean;
   setMobileOpen: (open: boolean) => void;
 }
@@ -53,6 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   pendingApprovalsCount,
   openTripsCount,
   openActionsCount = 1,
+  vehiclesCount = 11,
   mobileOpen,
   setMobileOpen,
 }) => {
@@ -74,7 +76,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       title: 'FLEET',
       items: [
-        { id: 'vehicles', label: 'Vehicles', icon: Truck, badge: '11' },
+        { id: 'vehicles', label: 'Vehicles', icon: Truck, badge: vehiclesCount > 0 ? String(vehiclesCount) : null },
         { id: 'transporters', label: 'Transporters', icon: Building2, badge: null },
       ],
     },

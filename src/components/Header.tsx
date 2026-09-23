@@ -105,6 +105,12 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-slate-300 font-normal">›</span>
               <span className="text-slate-900 font-bold">Actions</span>
             </>
+          ) : activeItem === 'vehicles' ? (
+            <>
+              <span className="text-slate-500 hover:text-slate-700 cursor-pointer">Fleet</span>
+              <span className="text-slate-300 font-normal">›</span>
+              <span className="text-slate-900 font-bold">Vehicles</span>
+            </>
           ) : (
             <>
               <span className="text-slate-900 font-bold tracking-tight">

@@ -107,3 +107,32 @@ export interface MetricItem {
   highlightColor?: string;
   badge?: string;
 }
+
+export interface VehiclePhoto {
+  id: string;
+  title: string;
+  category: 'front' | 'side' | 'cabin' | 'cargo' | 'document';
+  url: string;
+  timestamp: string;
+}
+
+export interface RegisteredVehicle {
+  id: string;
+  registrationNumber: string;
+  model: string;
+  wheels: number;
+  maxCapacityCFT: number;
+  addedAgo: string;
+  addedDate?: string;
+  owner: {
+    name: string;
+    phone: string;
+    initials: string;
+    colorBg?: string;
+    colorText?: string;
+  };
+  transporter?: string;
+  status?: 'Active' | 'Under Inspection' | 'Idle';
+  badgeCertification?: string;
+  photos: VehiclePhoto[];
+}
